@@ -20,7 +20,9 @@ public class MemgraphService {
     public void saveTransaction(Transaction transaction){
         try (Session session = driver.session()) {
             session.run(
-                    "CREATE (t:Transaction { " +
+                         "MERGE (sender: Account {accountNumber: $senderAccount})" +
+                            "MERGE (receiver: Account {accountNumber: $receiverAccount})" +
+                            "CREATE (t:Transaction { " +
                             "id: $id, " +
                             "time: $time, " +
                             "senderAccount: $senderAccount, " +
@@ -34,7 +36,9 @@ public class MemgraphService {
                             "isLaundering: $isLaundering, " +
                             "launderingType: $launderingType, " +
                             "createdAt: $createdAt " +
-                            "})",
+                            "})" +
+                                 "MERGE (sender)-[:SENT]->(t)" +
+                                 "MERGE (t)-[:RECEIVED_BY]->(receiver)",
                     Values.parameters(
                             "id", transaction.getId(),
                             "time", transaction.getTime() != null ? transaction.getTime().toString() : null,

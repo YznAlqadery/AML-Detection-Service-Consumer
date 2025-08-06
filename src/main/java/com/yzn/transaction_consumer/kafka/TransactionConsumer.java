@@ -6,6 +6,7 @@ import com.yzn.transaction_consumer.service.MemgraphService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class TransactionConsumer {
 
@@ -16,10 +17,12 @@ public class TransactionConsumer {
     }
 
 
-    @KafkaListener(topics = "transaction-topic", groupId="transaction-consumer-group")
-    public void consumeTransaction(Transaction transaction){
-        //System.out.println("Consumed Transaction: " + transaction);
-        memgraphService.saveTransaction(transaction);
+
+    @KafkaListener(topics = "transaction-topic", groupId = "transaction-group")
+    public void consumeTransaction(Transaction transaction) {
+            System.out.println("Consumed: " + transaction);
+            memgraphService.saveTransaction(transaction);
+
     }
 
 }
