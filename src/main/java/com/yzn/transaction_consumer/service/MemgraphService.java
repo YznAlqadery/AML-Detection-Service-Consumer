@@ -17,44 +17,49 @@ public class MemgraphService {
         this.driver = driver;
     }
 
-    public void saveTransaction(Transaction transaction){
+    public void saveTransaction(Transaction transaction) {
+        if (transaction.getFromAccount() == null || transaction.getToAccount() == null) {
+            // Optionally log the bad transaction
+            System.err.println("Skipping transaction due to null account numbers: " + transaction.getId());
+            return;
+        }
+
         try (Session session = driver.session()) {
             session.run(
-                         "MERGE (sender: Account {accountNumber: $senderAccount})" +
-                            "MERGE (receiver: Account {accountNumber: $receiverAccount})" +
+                    "MERGE (sender:Account {accountNumber: $fromAccount}) " +
+                            "MERGE (receiver:Account {accountNumber: $toAccount}) " +
                             "CREATE (t:Transaction { " +
                             "id: $id, " +
-                            "time: $time, " +
-                            "senderAccount: $senderAccount, " +
-                            "receiverAccount: $receiverAccount, " +
-                            "amount: $amount, " +
+                            "timestamp: $timestamp, " +
+                            "fromBank: $fromBank, " +
+                            "fromAccount: $fromAccount, " +
+                            "toAccount: $toAccount, " +
+                            "toBank: $toBank, " +
+                            "amountReceived: $amountReceived, " +
+                            "receivingCurrency: $receivingCurrency, " +
+                            "amountPaid: $amountPaid, " +
                             "paymentCurrency: $paymentCurrency, " +
-                            "receivedCurrency: $receivedCurrency, " +
-                            "senderBankLocation: $senderBankLocation, " +
-                            "receiverBankLocation: $receiverBankLocation, " +
-                            "paymentType: $paymentType, " +
-                            "isLaundering: $isLaundering, " +
-                            "launderingType: $launderingType, " +
-                            "createdAt: $createdAt " +
-                            "})" +
-                                 "MERGE (sender)-[:SENT]->(t)" +
-                                 "MERGE (t)-[:RECEIVED_BY]->(receiver)",
+                            "paymentFormat: $paymentFormat, " +
+                            "isLaundering: $isLaundering " +
+                            "}) " +
+                            "MERGE (sender)-[:SENT]->(t) " +
+                            "MERGE (t)-[:RECEIVED_BY]->(receiver)",
                     Values.parameters(
                             "id", transaction.getId(),
-                            "time", transaction.getTime() != null ? transaction.getTime().toString() : null,
-                            "senderAccount", transaction.getSenderAccount(),
-                            "receiverAccount", transaction.getReceiverAccount(),
-                            "amount", transaction.getAmount(),
+                            "timestamp", transaction.getTimestamp() != null ? transaction.getTimestamp().toString() : null,
+                            "fromBank", transaction.getFromBank(),
+                            "fromAccount", transaction.getFromAccount(),
+                            "toAccount", transaction.getToAccount(),
+                            "toBank", transaction.getToBank(),
+                            "amountReceived", transaction.getAmountReceived(),
+                            "receivingCurrency", transaction.getReceivingCurrency(),
+                            "amountPaid", transaction.getAmountPaid(),
                             "paymentCurrency", transaction.getPaymentCurrency(),
-                            "receivedCurrency", transaction.getReceivedCurrency(),
-                            "senderBankLocation", transaction.getSenderBankLocation(),
-                            "receiverBankLocation", transaction.getReceiverBankLocation(),
-                            "paymentType", transaction.getPaymentType() != null ? transaction.getPaymentType().toString() : null,
-                            "isLaundering", transaction.getIsLaundering(),
-                            "launderingType", transaction.getLaunderingType() != null ? transaction.getLaunderingType().toString() : null,
-                            "createdAt", transaction.getCreatedAt() != null ? transaction.getCreatedAt().toString() : null
+                            "paymentFormat", transaction.getPaymentFormat() != null ? transaction.getPaymentFormat().toString() : null,
+                            "isLaundering", transaction.getLaundering()
                     )
             );
         }
     }
+
 }

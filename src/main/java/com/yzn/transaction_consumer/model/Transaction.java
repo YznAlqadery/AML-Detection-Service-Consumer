@@ -1,64 +1,52 @@
 package com.yzn.transaction_consumer.model;
 
-import com.yzn.transaction_consumer.model.enums.LaunderingType;
-import com.yzn.transaction_consumer.model.enums.PaymentType;
+import com.yzn.transaction_consumer.model.enums.PaymentFormat;
+import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
+@Entity
+@Table(name = "transactions")
 public class Transaction {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private LocalTime time;
+    private LocalDateTime timestamp;
 
-    private LocalDate date;
+    private String fromBank;
+    private String fromAccount;
 
-    private Long senderAccount;
+    private String toAccount;
+    private String toBank;
 
-    private Long receiverAccount;
+    private Double amountReceived;
+    private String receivingCurrency;
 
-    private Double amount;
-
+    private Double amountPaid;
     private String paymentCurrency;
 
-    private String receivedCurrency;
+    @Enumerated(EnumType.STRING)
+    private PaymentFormat paymentFormat;
 
-    private String senderBankLocation;
-
-    private String receiverBankLocation;
-
-    private PaymentType paymentType;
-
-    private Integer isLaundering;
-
-    private LaunderingType launderingType;
-
-    private LocalDateTime createdAt;
+    private Boolean isLaundering;
 
     public Transaction() {
     }
 
-    public Transaction(LocalTime time, LocalDate date, Long senderAccount, Long receiverAccount,
-                       Double amount, String paymentCurrency, String receivedCurrency,
-                       String senderBankLocation, String receiverBankLocation,
-                       PaymentType paymentType, Integer isLaundering, LaunderingType launderingType) {
-        this.time = time;
-        this.date = date;
-        this.senderAccount = senderAccount;
-        this.receiverAccount = receiverAccount;
-        this.amount = amount;
+    public Transaction(String fromBank, String fromAccount, String toAccount, String toBank, Double amountReceived, String receivingCurrency, Double amountPaid, String paymentCurrency, PaymentFormat paymentFormat, Boolean isLaundering) {
+        this.fromBank = fromBank;
+        this.fromAccount = fromAccount;
+        this.toAccount = toAccount;
+        this.toBank = toBank;
+        this.amountReceived = amountReceived;
+        this.receivingCurrency = receivingCurrency;
+        this.amountPaid = amountPaid;
         this.paymentCurrency = paymentCurrency;
-        this.receivedCurrency = receivedCurrency;
-        this.senderBankLocation = senderBankLocation;
-        this.receiverBankLocation = receiverBankLocation;
-        this.paymentType = paymentType;
+        this.paymentFormat = paymentFormat;
         this.isLaundering = isLaundering;
-        this.launderingType = launderingType;
     }
-
-    // Getters and setters
 
     public Integer getId() {
         return id;
@@ -68,44 +56,68 @@ public class Transaction {
         this.id = id;
     }
 
-    public LocalTime getTime() {
-        return time;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public String getFromBank() {
+        return fromBank;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setFromBank(String fromBank) {
+        this.fromBank = fromBank;
     }
 
-    public Long getSenderAccount() {
-        return senderAccount;
+    public String getFromAccount() {
+        return fromAccount;
     }
 
-    public void setSenderAccount(Long senderAccount) {
-        this.senderAccount = senderAccount;
+    public void setFromAccount(String fromAccount) {
+        this.fromAccount = fromAccount;
     }
 
-    public Long getReceiverAccount() {
-        return receiverAccount;
+    public String getToAccount() {
+        return toAccount;
     }
 
-    public void setReceiverAccount(Long receiverAccount) {
-        this.receiverAccount = receiverAccount;
+    public void setToAccount(String toAccount) {
+        this.toAccount = toAccount;
     }
 
-    public Double getAmount() {
-        return amount;
+    public String getToBank() {
+        return toBank;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setToBank(String toBank) {
+        this.toBank = toBank;
+    }
+
+    public Double getAmountReceived() {
+        return amountReceived;
+    }
+
+    public void setAmountReceived(Double amountReceived) {
+        this.amountReceived = amountReceived;
+    }
+
+    public String getReceivingCurrency() {
+        return receivingCurrency;
+    }
+
+    public void setReceivingCurrency(String receivingCurrency) {
+        this.receivingCurrency = receivingCurrency;
+    }
+
+    public Double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(Double amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     public String getPaymentCurrency() {
@@ -116,79 +128,37 @@ public class Transaction {
         this.paymentCurrency = paymentCurrency;
     }
 
-    public String getReceivedCurrency() {
-        return receivedCurrency;
+    public PaymentFormat getPaymentFormat() {
+        return paymentFormat;
     }
 
-    public void setReceivedCurrency(String receivedCurrency) {
-        this.receivedCurrency = receivedCurrency;
+    public void setPaymentFormat(PaymentFormat paymentFormat) {
+        this.paymentFormat = paymentFormat;
     }
 
-    public String getSenderBankLocation() {
-        return senderBankLocation;
-    }
-
-    public void setSenderBankLocation(String senderBankLocation) {
-        this.senderBankLocation = senderBankLocation;
-    }
-
-    public String getReceiverBankLocation() {
-        return receiverBankLocation;
-    }
-
-    public void setReceiverBankLocation(String receiverBankLocation) {
-        this.receiverBankLocation = receiverBankLocation;
-    }
-
-    public PaymentType getPaymentType() {
-        return paymentType;
-    }
-
-    public void setPaymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public Integer getIsLaundering() {
+    public Boolean getLaundering() {
         return isLaundering;
     }
 
-    public void setIsLaundering(Integer isLaundering) {
-        this.isLaundering = isLaundering;
-    }
-
-    public LaunderingType getLaunderingType() {
-        return launderingType;
-    }
-
-    public void setLaunderingType(LaunderingType launderingType) {
-        this.launderingType = launderingType;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setLaundering(Boolean laundering) {
+        isLaundering = laundering;
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", time=" + time +
-                ", date=" + date +
-                ", senderAccount=" + senderAccount +
-                ", receiverAccount=" + receiverAccount +
-                ", amount=" + amount +
+                ", timestamp=" + timestamp +
+                ", fromBank='" + fromBank + '\'' +
+                ", fromAccount='" + fromAccount + '\'' +
+                ", toAccount='" + toAccount + '\'' +
+                ", toBank='" + toBank + '\'' +
+                ", amountReceived=" + amountReceived +
+                ", receivingCurrency='" + receivingCurrency + '\'' +
+                ", amountPaid=" + amountPaid +
                 ", paymentCurrency='" + paymentCurrency + '\'' +
-                ", receivedCurrency='" + receivedCurrency + '\'' +
-                ", senderBankLocation='" + senderBankLocation + '\'' +
-                ", receiverBankLocation='" + receiverBankLocation + '\'' +
-                ", paymentType=" + paymentType +
+                ", paymentFormat=" + paymentFormat +
                 ", isLaundering=" + isLaundering +
-                ", launderingType=" + launderingType +
-                ", createdAt=" + createdAt +
                 '}';
     }
 }
