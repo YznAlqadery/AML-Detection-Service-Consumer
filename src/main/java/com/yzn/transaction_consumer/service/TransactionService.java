@@ -26,7 +26,7 @@ public class TransactionService {
                     "(a3)-[r5:SENT]->(t3:Transaction)-[r6:RECEIVED_BY]->(a1) " +
                     "WHERE a1 <> a2 AND a2 <> a3 AND a1 <> a3 " +
                     "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5, r6 " +
-                    "LIMIT 15");
+                    "LIMIT 5");
 
             Map<String, Map<String,Object>> nodes = new HashMap<>();
             List<Map<String,Object>> relationships = new ArrayList<>();
@@ -42,7 +42,7 @@ public class TransactionService {
                     nodes.putIfAbsent(nodeId,Map.of(
                             "id",nodeId,
                             "labels",node.labels(),
-                            "properies",node.asMap()
+                            "properties",node.asMap()
                     ));
                 }
 
