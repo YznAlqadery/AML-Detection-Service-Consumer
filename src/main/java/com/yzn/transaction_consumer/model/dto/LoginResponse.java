@@ -1,11 +1,13 @@
 package com.yzn.transaction_consumer.model.dto;
 
+import com.yzn.transaction_consumer.model.enums.Role;
+
 public class LoginResponse {
     private String username;
     private String JwtToken;
-    private String role;
+    private Role role;
 
-    public LoginResponse(String username, String jwtToken,String role) {
+    public LoginResponse(String username, String jwtToken,Role role) {
         this.username = username;
         this.JwtToken = jwtToken;
         this.role = role;
@@ -27,11 +29,11 @@ public class LoginResponse {
         JwtToken = jwtToken;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
