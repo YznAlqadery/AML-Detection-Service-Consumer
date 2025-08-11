@@ -4,12 +4,12 @@ import com.yzn.transaction_consumer.model.enums.Role;
 
 public class LoginResponse {
     private String username;
-    private String JwtToken;
+    private String jwtToken;
     private Role role;
 
-    public LoginResponse(String username, String jwtToken,Role role) {
+    public LoginResponse(String username, String jwtToken, Role role) {
         this.username = username;
-        this.JwtToken = jwtToken;
+        this.jwtToken = jwtToken;
         this.role = role;
     }
 
@@ -22,11 +22,11 @@ public class LoginResponse {
     }
 
     public String getJwtToken() {
-        return JwtToken;
+        return jwtToken;
     }
 
     public void setJwtToken(String jwtToken) {
-        JwtToken = jwtToken;
+        this.jwtToken = jwtToken;
     }
 
     public Role getRole() {

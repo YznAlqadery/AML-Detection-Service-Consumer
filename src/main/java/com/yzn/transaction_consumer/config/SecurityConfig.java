@@ -1,39 +1,49 @@
 package com.yzn.transaction_consumer.config;
 
+import com.yzn.transaction_consumer.model.User;
+import com.yzn.transaction_consumer.model.enums.Role;
+import com.yzn.transaction_consumer.security.CustomUserDetailsService;
 import com.yzn.transaction_consumer.security.JwtFilter;
+import com.yzn.transaction_consumer.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final DataSource dataSource;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
-    public SecurityConfig(JwtFilter jwtFilter, DataSource dataSource) {
+    @Value("${admin.username}")
+    private String adminUsername;
+
+    @Value("${admin.password}")
+    private String adminPassword;
+
+    public SecurityConfig(JwtFilter jwtFilter, CustomUserDetailsService customUserDetailsService, UserService userService) {
         this.jwtFilter = jwtFilter;
-        this.dataSource = dataSource;
+        this.customUserDetailsService = customUserDetailsService;
+        this.userService = userService;
     }
 
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+        return authBuilder.build();
     }
 
     @Bean
@@ -41,30 +51,25 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests ->
                 requests.requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-                        );
+        );
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
-
     }
 
     @Bean
-    public CommandLineRunner initData(UserDetailsService userDetailsService) {
+    public CommandLineRunner initData() {
         return args -> {
-            UserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-
-            if (!userDetailsManager.userExists("admin")) {
-                UserDetails admin = User.withUsername("admin")
-                        .password(passwordEncoder().encode("adminpassword"))
-                        .roles("ADMIN")
-                        .build();
-                userDetailsManager.createUser(admin);
+            if (!userService.userExists(adminUsername)) {
+                User admin = new User(adminUsername,adminPassword,Role.ADMIN);
+                userService.saveUser(admin);
             }
         };
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
+

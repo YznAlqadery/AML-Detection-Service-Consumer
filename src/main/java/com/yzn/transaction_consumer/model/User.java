@@ -1,5 +1,6 @@
 package com.yzn.transaction_consumer.model;
 
+
 import com.yzn.transaction_consumer.model.enums.Role;
 import jakarta.persistence.*;
 
@@ -12,10 +13,10 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username",nullable = false,unique = true)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password",nullable = false)
     private String password;
 
     @Column(name = "role")
@@ -25,7 +26,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, Role role) {
+    public User(String username, String password,Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -66,10 +67,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

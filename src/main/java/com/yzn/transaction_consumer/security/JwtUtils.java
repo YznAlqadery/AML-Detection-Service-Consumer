@@ -1,16 +1,16 @@
 package com.yzn.transaction_consumer.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Component
@@ -22,49 +22,45 @@ public class JwtUtils {
     @Value("${spring.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-
-    public String getJwtFromHeader(HttpServletRequest request){
-        String bearer = request.getHeader("Authorization");
-        if(bearer != null && bearer.startsWith("Bearer ")){
-            return bearer.substring(7); // Remove Bearer from prefix
-        }
-        return null;
+    private SecretKey getSigningKey(){
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
     public String generateTokenFromUsername(UserDetails userDetails){
-        String username = userDetails.getUsername();
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(key())
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String getUsernameFromToken(String token){
-        return Jwts.parser().verifyWith((SecretKey) key())
-                .build().parseSignedClaims(token)
-                .getPayload().getSubject();
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getBody()
+                .getSubject();
     }
 
-    private Key key(){
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-    }
-
-    public boolean validateJwtToken(String authToken){
+    public boolean validateJwtToken(String token){
         try{
-            Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
+            Jwts.parser()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token);
             return true;
-        }catch (MalformedJwtException e){
-            throw new MalformedJwtException(e.getMessage());
-        }catch (ExpiredJwtException e){
-            throw new ExpiredJwtException(e.getHeader(),e.getClaims(),e.getMessage());
-        }catch (UnsupportedJwtException e){
-            throw new UnsupportedJwtException(e.getMessage());
-        }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException(e.getMessage());
+        }catch (JwtException | IllegalArgumentException e){
+            return false;
         }
-
     }
 
+    public String getJwtFromHeader(HttpServletRequest request){
+        String bearer = request.getHeader("Authorization");
+        if (bearer != null && bearer.startsWith("Bearer ")){
+            return bearer.substring(7);
+        }
+        return null;
+    }
 }
