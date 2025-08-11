@@ -1,5 +1,6 @@
 package com.yzn.transaction_consumer.model;
 
+import com.yzn.transaction_consumer.model.enums.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,12 +19,13 @@ public class User {
     private String password;
 
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public User() {
     }
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -53,11 +55,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
