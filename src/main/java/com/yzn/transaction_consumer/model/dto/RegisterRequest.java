@@ -1,16 +1,20 @@
 package com.yzn.transaction_consumer.model.dto;
 
+import com.yzn.transaction_consumer.model.enums.Role;
+
 public class RegisterRequest {
 
     private String username;
     private String password;
+    private Role role;
 
     public RegisterRequest() {
     }
 
-    public RegisterRequest(String username, String password) {
+    public RegisterRequest(String username, String password, Role role) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -27,5 +31,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -1,4 +1,5 @@
 package com.yzn.transaction_consumer.model.dto;
+import com.yzn.transaction_consumer.model.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 
 
@@ -10,12 +11,15 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
+    private Role role;
+
     public LoginRequest() {
     }
 
-    public LoginRequest(String username, String password) {
+    public LoginRequest(String username, String password,Role role) {
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -32,5 +36,13 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

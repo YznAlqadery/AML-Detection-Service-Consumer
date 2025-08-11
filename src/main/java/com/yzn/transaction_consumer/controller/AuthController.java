@@ -59,6 +59,7 @@ public class AuthController {
         String roleString = customUserDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
         Role role = Role.valueOf(roleString);
 
+
         // Build Response with username, token and role
         LoginResponse loginResponse = new LoginResponse(
                 customUserDetails.getUsername(),
@@ -78,6 +79,10 @@ public class AuthController {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
+        user.setRole(Role.USER);
+
+        System.out.println("Registering user role: " + user.getRole());  // should print USER
+
 
         userService.saveUser(user);
         return ResponseEntity.ok("User Registered Successfully");
