@@ -62,9 +62,11 @@ public class AuthController {
 
         // Build Response with username, token and role
         LoginResponse loginResponse = new LoginResponse(
+                customUserDetails.getId(),
                 customUserDetails.getUsername(),
                 jwt,
                 role
+
         );
     return ResponseEntity.ok(loginResponse);
     }

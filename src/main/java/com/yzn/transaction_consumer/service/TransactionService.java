@@ -25,7 +25,7 @@ public class TransactionService {
                     "(a2)-[r3:SENT]->(t2:Transaction)-[r4:RECEIVED_BY]->(a3:Account), " +
                     "(a3)-[r5:SENT]->(t3:Transaction)-[r6:RECEIVED_BY]->(a1) " +
                     "WHERE a1 <> a2 AND a2 <> a3 AND a1 <> a3 " +
-                    "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5, r6 " +
+                    "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5,     r6 " +
                     "LIMIT 5");
 
             Map<String, Map<String,Object>> nodes = new HashMap<>();

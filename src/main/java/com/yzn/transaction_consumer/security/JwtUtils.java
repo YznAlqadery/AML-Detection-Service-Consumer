@@ -52,7 +52,7 @@ public class JwtUtils {
                     .parseSignedClaims(token);
             return true;
         }catch (JwtException | IllegalArgumentException e){
-            return false;
+            throw new JwtException(e.getMessage());
         }
     }
 

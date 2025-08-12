@@ -3,14 +3,24 @@ package com.yzn.transaction_consumer.model.dto;
 import com.yzn.transaction_consumer.model.enums.Role;
 
 public class LoginResponse {
+    Integer id;
     private String username;
     private String jwtToken;
     private Role role;
 
-    public LoginResponse(String username, String jwtToken, Role role) {
+    public LoginResponse(Integer id,String username, String jwtToken, Role role) {
+        this.id = id;
         this.username = username;
         this.jwtToken = jwtToken;
         this.role = role;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
