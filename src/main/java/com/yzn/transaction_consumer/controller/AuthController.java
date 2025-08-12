@@ -79,13 +79,12 @@ public class AuthController {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
-        user.setRole(Role.USER);
-
-        System.out.println("Registering user role: " + user.getRole());  // should print USER
+        user.setRole(request.getRole());
+        //  System.out.println("Registering user role: " + user.getRole());  // should print USER
 
 
         userService.saveUser(user);
-        return ResponseEntity.ok("User Registered Successfully");
+        return ResponseEntity.ok(user);
 
     }
 }
