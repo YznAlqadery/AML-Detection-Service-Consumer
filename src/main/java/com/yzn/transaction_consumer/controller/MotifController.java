@@ -37,7 +37,7 @@ public class MotifController {
         return motifService.createMotif(motif);
     }
 
-    @PutMapping("")
+    @PutMapping("/{id}")
     public Motif updateMotif(@PathVariable Integer id, @RequestBody Motif motif){
         return motifService.updateMotif(id,motif);
     }

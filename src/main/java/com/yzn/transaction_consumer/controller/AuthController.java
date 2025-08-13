@@ -1,10 +1,8 @@
 package com.yzn.transaction_consumer.controller;
 
 
-import com.yzn.transaction_consumer.model.User;
 import com.yzn.transaction_consumer.model.dto.LoginRequest;
 import com.yzn.transaction_consumer.model.dto.LoginResponse;
-import com.yzn.transaction_consumer.model.dto.RegisterRequest;
 import com.yzn.transaction_consumer.model.enums.Role;
 import com.yzn.transaction_consumer.security.CustomUserDetails;
 import com.yzn.transaction_consumer.security.JwtUtils;
@@ -26,12 +24,12 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final UserService userService;
+
 
     public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.userService = userService;
+
     }
 
     @PostMapping("/login")

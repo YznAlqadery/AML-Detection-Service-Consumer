@@ -2,6 +2,7 @@ package com.yzn.transaction_consumer.controller;
 
 import com.yzn.transaction_consumer.model.User;
 import com.yzn.transaction_consumer.model.dto.RegisterRequest;
+import com.yzn.transaction_consumer.model.dto.UserDTO;
 import com.yzn.transaction_consumer.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,14 @@ public class AdminController {
 
 
         userService.saveUser(user);
-        return ResponseEntity.ok(user);
+
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setRole(user.getRole());
+
+        return ResponseEntity.ok(userDTO);
     }
 
     @DeleteMapping("/delete-user/{id}")
