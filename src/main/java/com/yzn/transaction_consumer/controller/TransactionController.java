@@ -6,6 +6,7 @@ import org.neo4j.driver.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,10 +26,10 @@ public class TransactionController {
     }
 
 
-    @GetMapping("/fraud-cycles")
-    public ResponseEntity<?> getFraudCycles() {
+    @GetMapping("/fraud-cycles/{id}")
+    public ResponseEntity<?> getFraudCycles(@PathVariable Integer id) {
         try {
-            var response = transactionService.getFraudCycles();
+            var response = transactionService.getFraudCycles(id);
 
             return ResponseEntity.ok(response);
         }catch (Exception e){

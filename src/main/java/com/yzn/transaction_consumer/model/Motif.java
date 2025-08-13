@@ -17,7 +17,7 @@ public class Motif {
     @Column(name = "description", nullable = false, length = 255)
     private String description;
 
-    @Column(name = "cypher_query")
+    @Column(name = "cypher_query", columnDefinition = "MEDIUMTEXT ")
     private String cypherQuery;
 
     @Column(name = "is_active")

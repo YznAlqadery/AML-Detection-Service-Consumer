@@ -20,6 +20,8 @@ public class MotifService {
         return motifRepository.findAll();
     }
 
+
+
     public Motif getMotifById(Integer id){
         return motifRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No Motif with " + id + " found"));
