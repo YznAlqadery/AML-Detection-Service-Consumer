@@ -26,38 +26,38 @@ public class MemgraphService {
 
         try (Session session = driver.session()) {
             session.run(
-                    "MERGE (sender:Account {accountNumber: $fromAccount}) " +
-                            "MERGE (receiver:Account {accountNumber: $toAccount}) " +
-                            "CREATE (t:Transaction { " +
-                            "id: $id, " +
-                            "timestamp: $timestamp, " +
-                            "fromBank: $fromBank, " +
-                            "fromAccount: $fromAccount, " +
-                            "toAccount: $toAccount, " +
-                            "toBank: $toBank, " +
-                            "amountReceived: $amountReceived, " +
-                            "receivingCurrency: $receivingCurrency, " +
-                            "amountPaid: $amountPaid, " +
-                            "paymentCurrency: $paymentCurrency, " +
-                            "paymentFormat: $paymentFormat, " +
-                            "isLaundering: $isLaundering " +
-                            "}) " +
-                            "MERGE (sender)-[:SENT]->(t) " +
-                            "MERGE (t)-[:RECEIVED_BY]->(receiver)",
-                    Values.parameters(
-                            "id", transaction.getId(),
-                            "timestamp", transaction.getTimestamp() != null ? transaction.getTimestamp().toString() : null,
-                            "fromBank", transaction.getFromBank(),
-                            "fromAccount", transaction.getFromAccount(),
-                            "toAccount", transaction.getToAccount(),
-                            "toBank", transaction.getToBank(),
-                            "amountReceived", transaction.getAmountReceived(),
-                            "receivingCurrency", transaction.getReceivingCurrency(),
-                            "amountPaid", transaction.getAmountPaid(),
-                            "paymentCurrency", transaction.getPaymentCurrency(),
-                            "paymentFormat", transaction.getPaymentFormat() != null ? transaction.getPaymentFormat().toString() : null,
-                            "isLaundering", transaction.getLaundering()
-                    )
+                        "MERGE (sender:Account {accountNumber: $fromAccount}) " +
+                                "MERGE (receiver:Account {accountNumber: $toAccount}) " +
+                                "CREATE (t:Transaction { " +
+                                "id: $id, " +
+                                "timestamp: $timestamp, " +
+                                "fromBank: $fromBank, " +
+                                "fromAccount: $fromAccount, " +
+                                "toAccount: $toAccount, " +
+                                "toBank: $toBank, " +
+                                "amountReceived: $amountReceived, " +
+                                "receivingCurrency: $receivingCurrency, " +
+                                "amountPaid: $amountPaid, " +
+                                "paymentCurrency: $paymentCurrency, " +
+                                "paymentFormat: $paymentFormat, " +
+                                "isLaundering: $isLaundering " +
+                                "}) " +
+                                "MERGE (sender)-[:SENT]->(t) " +
+                                "MERGE (t)-[:RECEIVED_BY]->(receiver)",
+                        Values.parameters(
+                                "id", transaction.getId(),
+                                "timestamp", transaction.getTimestamp() != null ? transaction.getTimestamp().toString() : null,
+                                "fromBank", transaction.getFromBank(),
+                                "fromAccount", transaction.getFromAccount(),
+                                "toAccount", transaction.getToAccount(),
+                                "toBank", transaction.getToBank(),
+                                "amountReceived", transaction.getAmountReceived(),
+                                "receivingCurrency", transaction.getReceivingCurrency(),
+                                "amountPaid", transaction.getAmountPaid(),
+                                "paymentCurrency", transaction.getPaymentCurrency(),
+                                "paymentFormat", transaction.getPaymentFormat() != null ? transaction.getPaymentFormat().toString() : null,
+                                "isLaundering", transaction.getLaundering()
+                        )
             );
         }
     }

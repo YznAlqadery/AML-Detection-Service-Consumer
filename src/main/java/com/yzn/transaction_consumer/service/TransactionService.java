@@ -3,7 +3,7 @@ package com.yzn.transaction_consumer.service;
 import com.yzn.transaction_consumer.model.Motif;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
-
+import org.neo4j.driver.types.Type;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,15 +19,15 @@ public class TransactionService {
         this.motifService = motifService;
     }
 
-    public Map<String,Object> getFraudCycles(Integer motifId){
+    public Map<String, Object> getFraudCycles(Integer motifId) {
         Motif motif = motifService.getMotifById(motifId);
 
         if (!motif.isActive()) {
             throw new RuntimeException("Motif is not active");
         }
 
-        Map<String, Map<String,Object>> nodes = new HashMap<>();
-        List<Map<String,Object>> relationships = new ArrayList<>();
+        Map<String, Map<String, Object>> nodes = new HashMap<>();
+        List<Map<String, Object>> relationships = new ArrayList<>();
 
         try (Session session = driver.session()) {
             var result = session.run(motif.getCypherQuery());
@@ -35,36 +35,36 @@ public class TransactionService {
             while (result.hasNext()) {
                 var record = result.next();
 
-                // Nodes
-                List<String> nodeKeys = List.of("a1","a2","a3","t1","t2","t3");
-                for (String key : nodeKeys) {
-                    if (!record.containsKey(key)) continue;
-                    var node = record.get(key).asNode();
-                    String nodeId = String.valueOf(node.id());
-                    nodes.putIfAbsent(nodeId, Map.of(
-                            "id", nodeId,
-                            "labels", node.labels(),
-                            "properties", node.asMap()
-                    ));
-                }
+                for (String key : record.keys()) {
+                    var value = record.get(key);
 
-                // Relationships
-                List<String> relationKeys = List.of("r1","r2","r3","r4","r5","r6");
-                for (String key : relationKeys) {
-                    if (!record.containsKey(key)) continue;
-                    var relation = record.get(key).asRelationship();
-                    String relationId = String.valueOf(relation.id());
-                    relationships.add(Map.of(
-                            "id", relationId,
-                            "type", relation.type(),
-                            "startNode", relation.startNodeId(),
-                            "endNode", relation.endNodeId(),
-                            "properties", relation.asMap()
-                    ));
+                    // Node
+                    if (value != null && value.hasType(TypeSystemUtil.nodeType())) {
+                        var node = value.asNode();
+                        String nodeId = String.valueOf(node.id());
+                        nodes.putIfAbsent(nodeId, Map.of(
+                                "id", nodeId,
+                                "labels", node.labels(),
+                                "properties", node.asMap()
+                        ));
+                    }
+
+                    // Relationship
+                    else if (value != null && value.hasType(TypeSystemUtil.relationshipType())) {
+                        var rel = value.asRelationship();
+                        String relId = String.valueOf(rel.id());
+                        relationships.add(Map.of(
+                                "id", relId,
+                                "type", rel.type(),
+                                "startNode", rel.startNodeId(),
+                                "endNode", rel.endNodeId(),
+                                "properties", rel.asMap()
+                        ));
+                    }
                 }
             }
 
-            Map<String,Object> response = new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
             response.put("nodes", nodes.values());
             response.put("relationships", relationships);
             return response;
@@ -73,17 +73,24 @@ public class TransactionService {
             throw new RuntimeException("Error querying fraud cycles for motif " + motifId, e);
         }
     }
+
     public List<Motif> getActiveMotifs() {
         return motifService.getAllMotifs().stream()
                 .filter(Motif::isActive)
                 .toList();
     }
+
 }
 
-//            var result = session.run("MATCH " +
-//                    "(a1:Account)-[r1:SENT]->(t1:Transaction)-[r2:RECEIVED_BY]->(a2:Account), " +
-//                    "(a2)-[r3:SENT]->(t2:Transaction)-[r4:RECEIVED_BY]->(a3:Account), " +
-//                    "(a3)-[r5:SENT]->(t3:Transaction)-[r6:RECEIVED_BY]->(a1) " +
-//                    "WHERE a1 <> a2 AND a2 <> a3 AND a1 <> a3 " +
-//                    "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5,     r6 " +
-//                    "LIMIT 5");
+// Utility for Neo4j Type checking
+class TypeSystemUtil {
+    private static final org.neo4j.driver.types.TypeSystem TYPE_SYSTEM = org.neo4j.driver.types.TypeSystem.getDefault();
+
+    public static org.neo4j.driver.types.Type nodeType() {
+        return TYPE_SYSTEM.NODE();
+    }
+
+    public static org.neo4j.driver.types.Type relationshipType() {
+        return TYPE_SYSTEM.RELATIONSHIP();
+    }
+}
