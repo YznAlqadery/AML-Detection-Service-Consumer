@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/motifs/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/motifs/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/motifs/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,"/api/role").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/roles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()  // Permit all auth endpoints like login, register
