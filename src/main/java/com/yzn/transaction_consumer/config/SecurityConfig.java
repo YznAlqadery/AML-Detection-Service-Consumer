@@ -60,6 +60,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())  // Disable CSRF if using Postman and stateless JWT auth
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Public read access for all authenticated users
+                        .requestMatchers(HttpMethod.GET, "/api/motifs/**").hasAnyRole("ADMIN","USER")
+
+                        // Restricted to ADMIN only
+                        .requestMatchers(HttpMethod.POST, "/api/motifs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/motifs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/motifs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/role").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()  // Permit all auth endpoints like login, register
                         .anyRequest().authenticated()
                 )
