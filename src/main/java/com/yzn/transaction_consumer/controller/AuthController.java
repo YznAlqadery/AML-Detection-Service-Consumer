@@ -71,7 +71,7 @@ public class AuthController {
     return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/create-user")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         if(userService.userExists(request.getUsername())){
             return ResponseEntity
