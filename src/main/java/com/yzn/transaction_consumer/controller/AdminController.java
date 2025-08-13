@@ -4,10 +4,7 @@ import com.yzn.transaction_consumer.model.User;
 import com.yzn.transaction_consumer.model.dto.RegisterRequest;
 import com.yzn.transaction_consumer.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -37,5 +34,9 @@ public class AdminController {
         return ResponseEntity.ok(user);
     }
 
+    @DeleteMapping("/delete-user/{id}")
+    public void deleteUser(@PathVariable Integer id){
+        userService.deleteUser(id);
+    }
 
 }
