@@ -35,6 +35,7 @@ public class AdminController {
 
         userService.saveUser(user);
         return ResponseEntity.ok(user);
-
     }
+
+
 }

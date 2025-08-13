@@ -4,10 +4,6 @@ package com.yzn.transaction_consumer.service;
 import com.yzn.transaction_consumer.model.User;
 import com.yzn.transaction_consumer.model.enums.Role;
 import com.yzn.transaction_consumer.repository.UserRepository;
-import org.apache.kafka.common.message.LeaderAndIsrRequestData;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +36,12 @@ public class UserService  {
 
     public List<User> getUsersByRole(Role role){
         return userRepository.findByRole(role);
+    }
+
+    public void deleteUser(Integer id){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found."));
+
+        userRepository.delete(user);
     }
 }
