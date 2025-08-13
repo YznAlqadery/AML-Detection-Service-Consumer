@@ -71,22 +71,5 @@ public class AuthController {
     return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/create-user")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
-        if(userService.userExists(request.getUsername())){
-            return ResponseEntity
-                    .badRequest()
-                    .body("Username is already taken.");
-        }
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setRole(request.getRole());
-        //  System.out.println("Registering user role: " + user.getRole());  // should print USER
 
-
-        userService.saveUser(user);
-        return ResponseEntity.ok(user);
-
-    }
 }
