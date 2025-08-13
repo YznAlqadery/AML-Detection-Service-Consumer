@@ -33,6 +33,7 @@ public class MotifService {
         Motif motif = motifRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No Motif with " + id + " found."));
 
+        motif.setName(updatedMotif.getName()!=null ? updatedMotif.getName(): motif.getName());
         motif.setDescription(updatedMotif.getDescription()!=null? updatedMotif.getDescription(): motif.getDescription());
         motif.setCypherQuery(updatedMotif.getCypherQuery()!=null? updatedMotif.getCypherQuery(): motif.getCypherQuery());
         motif.setActive(updatedMotif.isActive()!=null? updatedMotif.isActive(): motif.isActive());

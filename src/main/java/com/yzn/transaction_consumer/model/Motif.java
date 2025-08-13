@@ -11,6 +11,9 @@ public class Motif {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "name",nullable = false)
+    private String name;
+
     @Column(name = "description", nullable = false, length = 255)
     private String description;
 
@@ -23,7 +26,8 @@ public class Motif {
     public Motif() {
     }
 
-    public Motif(String description, String cypherQuery, boolean isActive) {
+    public Motif(String name,String description, String cypherQuery, boolean isActive) {
+        this.name = name;
         this.description = description;
         this.cypherQuery = cypherQuery;
         this.isActive = isActive;
@@ -35,6 +39,14 @@ public class Motif {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -65,6 +77,7 @@ public class Motif {
     public String toString() {
         return "Motif{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", cypherQuery='" + cypherQuery + '\'' +
                 ", isActive=" + isActive +
