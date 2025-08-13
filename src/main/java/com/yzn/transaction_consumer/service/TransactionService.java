@@ -1,5 +1,6 @@
 package com.yzn.transaction_consumer.service;
 
+import com.yzn.transaction_consumer.model.Motif;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 import org.springframework.stereotype.Service;
@@ -13,23 +14,34 @@ import java.util.Map;
 public class TransactionService {
 
     private final Driver driver;
+    private final MotifService motifService;
 
-    public TransactionService(Driver driver) {
+    public TransactionService(Driver driver, MotifService motifService) {
         this.driver = driver;
+        this.motifService = motifService;
     }
 
     public Map<String,Object> getFraudCycles(){
-        try(Session session = driver.session()){
-            var result = session.run("MATCH " +
-                    "(a1:Account)-[r1:SENT]->(t1:Transaction)-[r2:RECEIVED_BY]->(a2:Account), " +
-                    "(a2)-[r3:SENT]->(t2:Transaction)-[r4:RECEIVED_BY]->(a3:Account), " +
-                    "(a3)-[r5:SENT]->(t3:Transaction)-[r6:RECEIVED_BY]->(a1) " +
-                    "WHERE a1 <> a2 AND a2 <> a3 AND a1 <> a3 " +
-                    "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5,     r6 " +
-                    "LIMIT 5");
 
-            Map<String, Map<String,Object>> nodes = new HashMap<>();
-            List<Map<String,Object>> relationships = new ArrayList<>();
+        Map<String, Map<String,Object>> nodes = new HashMap<>();
+        List<Map<String,Object>> relationships = new ArrayList<>();
+        var motifs = motifService.getAllMotifs()
+                .stream()
+                .filter(Motif::isActive)
+                .toList();
+
+        try(Session session = driver.session()){
+//            var result = session.run("MATCH " +
+//                    "(a1:Account)-[r1:SENT]->(t1:Transaction)-[r2:RECEIVED_BY]->(a2:Account), " +
+//                    "(a2)-[r3:SENT]->(t2:Transaction)-[r4:RECEIVED_BY]->(a3:Account), " +
+//                    "(a3)-[r5:SENT]->(t3:Transaction)-[r6:RECEIVED_BY]->(a1) " +
+//                    "WHERE a1 <> a2 AND a2 <> a3 AND a1 <> a3 " +
+//                    "RETURN a1, a2, a3, t1, t2, t3, r1, r2, r3, r4, r5,     r6 " +
+//                    "LIMIT 5");
+            for(var motif:motifs){
+                String cypher = motif.getCypherQuery();
+
+                var result = session.run(cypher);
 
             while (result.hasNext()){
                 var record = result.next();
@@ -48,17 +60,17 @@ public class TransactionService {
 
                 // Extracting relationships
                 List<String> relationKeys = List.of("r1","r2","r3","r4","r5","r6");
-                for (String key : relationKeys){
+                for (String key : relationKeys) {
                     var relation = record.get(key).asRelationship();
                     String relationId = String.valueOf(relation.id());
                     relationships.add(Map.of(
-                            "id",relationId,
-                            "type",relation.type(),
-                            "startNode",relation.startNodeId(),
-                            "endNode",relation.endNodeId(),
-                            "properties",relation.asMap()
+                            "id", relationId,
+                            "type", relation.type(),
+                            "startNode", relation.startNodeId(),
+                            "endNode", relation.endNodeId(),
+                            "properties", relation.asMap()
                     ));
-
+                }
                 }
             }
             Map<String ,Object> response = new HashMap<>();
