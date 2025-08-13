@@ -53,7 +53,7 @@ public class Motif {
         this.cypherQuery = cypherQuery;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
