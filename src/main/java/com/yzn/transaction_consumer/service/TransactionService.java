@@ -1,9 +1,9 @@
 package com.yzn.transaction_consumer.service;
 
 import com.yzn.transaction_consumer.model.Motif;
+import com.yzn.transaction_consumer.util.TypeSystemUtil;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.types.Type;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -82,15 +82,4 @@ public class TransactionService {
 
 }
 
-// Utility for Neo4j Type checking
-class TypeSystemUtil {
-    private static final org.neo4j.driver.types.TypeSystem TYPE_SYSTEM = org.neo4j.driver.types.TypeSystem.getDefault();
 
-    public static org.neo4j.driver.types.Type nodeType() {
-        return TYPE_SYSTEM.NODE();
-    }
-
-    public static org.neo4j.driver.types.Type relationshipType() {
-        return TYPE_SYSTEM.RELATIONSHIP();
-    }
-}
