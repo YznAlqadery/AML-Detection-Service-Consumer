@@ -2,6 +2,7 @@ package com.yzn.transaction_consumer.service;
 
 
 import com.yzn.transaction_consumer.model.User;
+import com.yzn.transaction_consumer.model.dto.UserDTO;
 import com.yzn.transaction_consumer.model.enums.Role;
 import com.yzn.transaction_consumer.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,5 +44,15 @@ public class UserService  {
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found."));
 
         userRepository.delete(user);
+    }
+
+    public void  updateUser(Integer id, UserDTO userDTO){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No User with id " + id + " found."));
+
+        user.setUsername(userDTO.getUsername());
+        user.setRole(userDTO.getRole());
+        user.setPassword(user.getPassword());
+        userRepository.save(user);
     }
 }
