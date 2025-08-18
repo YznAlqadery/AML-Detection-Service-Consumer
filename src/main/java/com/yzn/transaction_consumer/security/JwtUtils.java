@@ -28,26 +28,26 @@ public class JwtUtils {
 
     public String generateTokenFromUsername(UserDetails userDetails){
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
     public String getUsernameFromToken(String token){
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
-                .getBody()
+                .getPayload()
                 .getSubject();
     }
 
     public boolean validateJwtToken(String token){
         try{
             Jwts.parser()
-                    .setSigningKey(getSigningKey())
+                    .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token);
             return true;
